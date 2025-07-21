@@ -2,10 +2,14 @@ const Song = require('../models/Song');
 
 const addSong = async (req, res) => {
     try {
-        const { title, artist, duration, cover, preview } = req.body;
+        const { title, artist, duration, cover, preview, price } = req.body;
 
-        if (!title || !artist || !duration) {
-            return res.status(400).json({ error: 'Title, artist and duration are required' });
+        if (!title || !artist || !duration || price === undefined) {
+            return res.status(400).json({ error: 'Title, artist, duration and price are required' });
+        }
+
+        if (price < 0) {
+            return res.status(400).json({ error: 'Price must be greater than or equal to 0' });
         }
 
         const song = new Song({
@@ -13,7 +17,8 @@ const addSong = async (req, res) => {
             artist,
             duration,
             cover,
-            preview
+            preview,
+            price
         });
 
         const savedSong = await song.save();
